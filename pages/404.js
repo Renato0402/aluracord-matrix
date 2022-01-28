@@ -1,24 +1,12 @@
 import errogif from '../assets/erro404.gif';
 
-export default function Custom404(){
+export default function Custom404() {
 
-    return(
-         
-       <>
-        <img src={errogif.src} class="size"/>
+  return (
 
-        <style jsx>{`
-          
-          .size {
-            
-            width:0;
-            height:0;
-          }
+    <>
+      <img src={errogif.src}/>
 
-        `}
-
-        </style>
-
-        </>
-    );
+    </>
+  );
 }

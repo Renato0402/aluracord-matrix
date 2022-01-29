@@ -1,27 +1,55 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React, { useEffect } from 'react';
 import appConfig from '../config.json';
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzQxNDE2NSwiZXhwIjoxOTU4OTkwMTY1fQ.QWI71794q3IqCAc-QjfVg8n2R3pjqr-4pcPWS6bhbZg"
+const SUPABASE_URL = "https://tlytfwrrjoejyganorui.supabase.co"
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+
 
 export default function ChatPage() {
 
    const [mensagem, setMensagem] = React.useState()
    const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
 
+   React.useEffect(() => {
+      supabaseClient
+         .from('mensagens')
+         .select('*')
+         .order('id',{ascending:false})
+         .then(({ data }) => {
+
+            setListaDeMensagens(data)
+
+         })
+
+   }, [])
+
    function handleNovaMensagem(novaMensagem) {
       const mensagem = {
-         id: listaDeMensagens.length + 1,
+       
          de: 'Renato0402',
          texto: novaMensagem,
 
       }
-      setListaDeMensagens([
-         //Colocar os itens da listaDeMensagens no setListaDeMensagenas
-         //mais a nova mensagem
-         mensagem,
-         ...listaDeMensagens
-         
-      ])
+
+      supabaseClient
+         .from('mensagens')
+         .insert([mensagem])
+         .then(({ data }) => {
+
+            setListaDeMensagens([
+               //Colocar os itens da listaDeMensagens no setListaDeMensagenas
+               //mais a nova mensagem
+               data[0],
+               ...listaDeMensagens
+
+            ])
+         })
       setMensagem("")
+
    }
 
    return (
@@ -167,25 +195,25 @@ function MessageList(props) {
                   >
                      <Image
                         styleSheet={{
-                           float:'left',
+                           float: 'left',
                            width: '20px',
                            height: '20px',
                            borderRadius: '50%',
                            display: 'inline-block',
                            marginRight: '8px',
                         }}
-                        src={`https://github.com/Renato0402.png`}
+                        src={`https://github.com/${mensagem.de}.png`}
                      />
                      <Text styleSheet={{
-                        display:'inline-block'
+                        display: 'inline-block'
                      }}
-                     tag="strong">
+                        tag="strong">
                         {mensagem.de}
-                        
+
                      </Text>
                      <Text
                         styleSheet={{
-                           display:'inline-block',
+                           display: 'inline-block',
                            fontSize: '10px',
                            marginLeft: '8px',
                            color: appConfig.theme.colors.neutrals[300],
